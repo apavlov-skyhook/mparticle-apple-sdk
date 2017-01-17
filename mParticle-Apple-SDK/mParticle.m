@@ -178,7 +178,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeUnknown
                                            userInfo:nil
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit setKitAttribute:MPKitAttributeJailbrokenKey value:jailbrokenInfo];
                                          }];
 }
@@ -197,7 +197,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeSessionStart
                                            userInfo:nil
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit beginSession];
                                          }];
 }
@@ -207,7 +207,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeSessionEnd
                                            userInfo:nil
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit endSession];
                                          }];
 }
@@ -218,7 +218,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeUnknown
                                            userInfo:nil
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit logInstall];
                                          }];
 }
@@ -228,7 +228,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeUnknown
                                            userInfo:nil
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit logUpdate];
                                          }];
 }
@@ -252,7 +252,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeUnknown
                                            userInfo:@{kMPStateKey:@(debugMode)}
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit setDebugMode:debugMode];
                                          }];
 }
@@ -270,7 +270,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeUnknown
                                            userInfo:@{kMPStateKey:@(consoleLogging)}
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit setDebugMode:consoleLogging];
                                          }];
 }
@@ -323,7 +323,7 @@ NSString *const kMPStateKey = @"state";
                                                                       event:nil
                                                                 messageType:MPMessageTypeOptOut
                                                                    userInfo:@{kMPStateKey:@(optOut)}
-                                                                 kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                                                 kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                                                      *execStatus = [kit setOptOut:optOut];
                                                                  }];
                         } else if (execStatus == MPExecStatusDelayedExecution) {
@@ -575,8 +575,8 @@ NSString *const kMPStateKey = @"state";
                                                                             event:event
                                                                       messageType:MPMessageTypeEvent
                                                                          userInfo:nil
-                                                                       kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
-                                                                           *execStatus = [kit beginTimedEvent:forwardEvent];
+                                                                       kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
+                                                                           *execStatus = [kit beginTimedEvent:forwardKitFilter.forwardEvent];
                                                                        }];
                               } else if (execStatus == MPExecStatusDelayedExecution) {
                                   MPILogWarning(@"Delayed timed event: %@\n Reason: %@", event, [strongSelf.backendController execStatusDescription:execStatus]);
@@ -602,8 +602,8 @@ NSString *const kMPStateKey = @"state";
                                                                      event:event
                                                                messageType:MPMessageTypeEvent
                                                                   userInfo:nil
-                                                                kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
-                                                                    *execStatus = [kit endTimedEvent:forwardEvent];
+                                                                kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
+                                                                    *execStatus = [kit endTimedEvent:forwardKitFilter.forwardEvent];
                                                                 }];
                        } else if (execStatus == MPExecStatusDelayedExecution) {
                            MPILogWarning(@"Delayed timed event: %@\n Reason: %@", event, [strongSelf.backendController execStatusDescription:execStatus]);
@@ -633,8 +633,8 @@ NSString *const kMPStateKey = @"state";
                                                                      event:event
                                                                messageType:MPMessageTypeEvent
                                                                   userInfo:nil
-                                                                kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus *__autoreleasing *execStatus) {
-                                                                    *execStatus = [kit logEvent:forwardEvent];
+                                                                kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus *__autoreleasing *execStatus) {
+                                                                    *execStatus = [kit logEvent:forwardKitFilter.forwardEvent];
                                                                 }];
                        } else if (execStatus == MPExecStatusDelayedExecution) {
                            MPILogWarning(@"Delayed event: %@\n Reason: %@", event, [strongSelf.backendController execStatusDescription:execStatus]);
@@ -672,8 +672,8 @@ NSString *const kMPStateKey = @"state";
                                                                       event:event
                                                                 messageType:MPMessageTypeScreenView
                                                                    userInfo:nil
-                                                                 kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
-                                                                     *execStatus = [kit logScreen:forwardEvent];
+                                                                 kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
+                                                                     *execStatus = [kit logScreen:forwardKitFilter.forwardEvent];
                                                                  }];
                         } else if (execStatus == MPExecStatusDelayedExecution) {
                             MPILogWarning(@"Delayed screen event: %@\n Reason: %@", event, [strongSelf.backendController execStatusDescription:execStatus]);
@@ -771,8 +771,8 @@ NSString *const kMPStateKey = @"state";
                                                                             event:event
                                                                       messageType:MPMessageTypeBreadcrumb
                                                                          userInfo:nil
-                                                                       kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus *__autoreleasing *execStatus) {
-                                                                           *execStatus = [kit leaveBreadcrumb:forwardEvent];
+                                                                       kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus *__autoreleasing *execStatus) {
+                                                                           *execStatus = [kit leaveBreadcrumb:forwardKitFilter.forwardEvent];
                                                                        }];
                               } else if (execStatus == MPExecStatusDelayedExecution) {
                                   MPILogWarning(@"Delayed breadcrumb: %@\n Reason: %@", event, [strongSelf.backendController execStatusDescription:execStatus]);
@@ -872,7 +872,7 @@ NSString *const kMPStateKey = @"state";
                                    SEL logEventSelector = @selector(logEvent:);
                                    
                                    [[MPKitContainer sharedInstance] forwardCommerceEventCall:commerceEvent
-                                                                                  kitHandler:^(id<MPKitProtocol> kit, MPKitFilter *kitFilter, MPKitExecStatus **execStatus) {
+                                                                                  kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *kitFilter, MPKitExecStatus **execStatus) {
                                                                                       if (kitFilter.forwardCommerceEvent) {
                                                                                           if ([kit respondsToSelector:logCommerceEventSelector]) {
                                                                                               *execStatus = [kit logCommerceEvent:kitFilter.forwardCommerceEvent];
@@ -934,8 +934,8 @@ NSString *const kMPStateKey = @"state";
                                                                      event:nil
                                                                messageType:MPMessageTypeUnknown
                                                                   userInfo:nil
-                                                                kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
-                                                                    *execStatus = [kit logLTVIncrease:increaseAmount event:forwardEvent];
+                                                                kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
+                                                                    *execStatus = [kit logLTVIncrease:increaseAmount event:forwardKitFilter.forwardEvent];
                                                                 }];
                        } else if (execStatus == MPExecStatusDelayedExecution) {
                            MPILogWarning(@"Delayed LTV Increase: %@\n Reason: %@", event, [strongSelf.backendController execStatusDescription:execStatus]);
@@ -1068,7 +1068,7 @@ NSString *const kMPStateKey = @"state";
                                               event:nil
                                         messageType:MPMessageTypeEvent
                                            userInfo:nil
-                                         kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                         kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                              *execStatus = [kit setLocation:location];
                                          }];
 }
@@ -1303,7 +1303,7 @@ NSString *const kMPStateKey = @"state";
                                                                           event:nil
                                                                     messageType:MPMessageTypeProfile
                                                                        userInfo:nil
-                                                                     kitHandler:^(id<MPKitProtocol> kit, MPEvent *forwardEvent, MPKitExecStatus **execStatus) {
+                                                                     kitHandler:^(id<MPKitProtocol> kit, MPForwardQueueParameters *forwardParameters, MPKitFilter *forwardKitFilter, MPKitExecStatus **execStatus) {
                                                                          *execStatus = [kit logout];
                                                                      }];
                             } else if (execStatus == MPExecStatusDelayedExecution) {
